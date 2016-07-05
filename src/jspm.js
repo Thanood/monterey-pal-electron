@@ -2,7 +2,9 @@ export class JSPM {
   isLoaded = false;
 
   install (packages, options) {
+    var system = System;
     const jspm = System._nodeRequire('jspm');
+    System = system;
     let jspmOptions = options.jspmOptions || {};
 
     let originalWorkingDirectory = process.cwd();

@@ -16,7 +16,9 @@ var JSPM = exports.JSPM = function () {
   JSPM.prototype.install = function install(packages, options) {
     var _this = this;
 
+    var system = System;
     var jspm = System._nodeRequire('jspm');
+    System = system;
     var jspmOptions = options.jspmOptions || {};
 
     var originalWorkingDirectory = process.cwd();
