@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var child_process = System._nodeRequire('child_process');
+
 var NPM = exports.NPM = function () {
   function NPM() {
     _classCallCheck(this, NPM);
-
-    this.isLoaded = false;
   }
 
   NPM.prototype.install = function install(packages, options) {
@@ -55,6 +55,19 @@ var NPM = exports.NPM = function () {
           resolve();
         }
       });
+    });
+  };
+
+  NPM.prototype.ls = function ls(options) {
+    return new Promise(function (resolve, reject) {
+      try {
+        child_process.exec('npm ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
+          resolve(JSON.parse(stdout));
+        });
+      } catch (e) {
+        console.log('Error running "npm ls"', e);
+        reject(e);
+      }
     });
   };
 

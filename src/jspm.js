@@ -1,30 +1,54 @@
+const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
+const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
+import {createGUID} from './guid';
+
 export class JSPM {
-  isLoaded = false;
-
-  install (packages, options) {
-    var system = System;
-    const jspm = System._nodeRequire('jspm');
-    System = system;
+  install (deps, options) {
     let jspmOptions = options.jspmOptions || {};
+    let jspmModule = requireTaskPool(jspmTaskPath);
 
-    let originalWorkingDirectory = process.cwd();
-    process.chdir(jspmOptions.workingDirectory || process.cwd());
-    this._log(options, `chdir: ${jspmOptions.workingDirectory}`);
-
-    jspm.setPackagePath(jspmOptions.workingDirectory);
-    this._log(options, "installing...");
-    return new Promise((resolve, reject) => {
-      jspm.install(true, jspmOptions).then(() => {
-        this._log(options, "finished installing...");
-        process.chdir(originalWorkingDirectory);
-        resolve();
-      }).catch(error => {
-        reject(error);
-      });
-    }).catch(error => {
-      this._log(options, "error while installing...", error);
-        process.chdir(originalWorkingDirectory);
+    //add guid we will use for messaging between window && add listener for the guid
+    jspmOptions.guid = createGUID();
+    ipcRenderer.on(jspmOptions.guid, (event, msg) => {
+      this._log(options,msg);
     });
+
+    this._log(options, 'installing...');
+    return jspmModule.install(deps, jspmOptions).then(()=> {
+      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      this._log(options, 'finished installing jspm packages');
+    }).catch(error => {
+      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      this._log(options, `error while installing jspm packages, ${error.message}`);
+      throw error;
+    });
+  }
+
+  downloadLoader(options) {
+    let jspmOptions = options.jspmOptions || {};
+    let jspmModule = requireTaskPool(jspmTaskPath);
+
+    this._log(options, 'downloading systemjs loader...');
+    return jspmModule.dlLoader(jspmOptions)
+    .then(() => {
+      this._log(options, `downloaded systemjs loader`);
+    }).catch(err => {
+      this._log(options, `error while downloading systemjs loader, ${err.message}`);
+      throw err;
+    });
+  }
+
+  getForks(config, options) {
+    let jspmOptions = options.jspmOptions || {};
+    let jspmModule = requireTaskPool(jspmTaskPath);
+    return jspmModule.getForks(config, jspmOptions)
+  }
+
+  getConfig(projectPath, packageJSONPath) {
+    let jspmModule = requireTaskPool(jspmTaskPath);
+
+    return jspmModule.getConfig(projectPath, packageJSONPath);
   }
 
   _log(options, msg) {

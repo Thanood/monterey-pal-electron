@@ -7,6 +7,7 @@ const yauzl    = System._nodeRequire('yauzl');
 const mkdirp   = System._nodeRequire('mkdirp');
 const mv       = System._nodeRequire('mv');
 const nodeUrl  = System._nodeRequire('url');
+const remote   = System._nodeRequire('electron').remote;
 
 export class Fs {
   async readFile(filePath) {
@@ -30,6 +31,16 @@ export class Fs {
         } else {
           reject(err);
         }
+      });
+    });
+  }
+
+  async writeFile(path, content) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(path, content, (err) => {
+        if (err) reject(err);
+
+        resolve();
       });
     });
   }
@@ -96,10 +107,18 @@ export class Fs {
     });
   }
 
+  getRootDir() {
+    return remote.getGlobal('rootDir');
+  }
+
+  normalize(p) {
+    return path.normalize(p);
+  }
+
   async unzip(zipPath, outPath) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       yauzl.open(zipPath, {autoClose: true, lazyEntries: true}, (err, zipfile) => {
-        if (err) throw err;
+        if (err) reject(err);
         zipfile.readEntry();
         zipfile.on('close', () => resolve());
         zipfile.on('error', () => reject());
@@ -107,16 +126,16 @@ export class Fs {
           if (/\/$/.test(entry.fileName)) {
             // directory file names end with '/'
             mkdirp(this.join(outPath, entry.fileName), (err1) => {
-              if (err1) throw err1;
+              if (err1) reject(err1);
               zipfile.readEntry();
             });
           } else {
             // file entry
             zipfile.openReadStream(entry, (err2, readStream) => {
-              if (err2) throw err2;
+              if (err2) reject(err2);
               // ensure parent directory exists
               mkdirp(path.dirname(this.join(outPath, entry.fileName)), (err3) => {
-                if (err3) throw err3;
+                if (err3) reject(err3);
                 readStream.pipe(fs.createWriteStream(this.join(outPath, entry.fileName)));
                 readStream.on('end', function() {
                   zipfile.readEntry();

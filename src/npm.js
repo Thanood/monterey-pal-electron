@@ -1,6 +1,6 @@
-export class NPM {
-  isLoaded = false;
+let child_process = System._nodeRequire('child_process');
 
+export class NPM {
   install (packages, options) {
     const npm = System._nodeRequire('npm');
     let npmOptions = options.npmOptions || {};
@@ -23,7 +23,7 @@ export class NPM {
 
           this._log(options, "installing...");
           npm.commands.install(packages, error => {
-          this._log(options, "finished installing...", error);
+            this._log(options, "finished installing...", error);
             process.chdir(originalWorkingDirectory);
 
             if (error) reject(error);
@@ -44,6 +44,21 @@ export class NPM {
           resolve();
         }
       });
+    });
+  }
+
+  ls(options) {
+    return new Promise((resolve, reject) => {
+      try {
+        // we can talk to the npm cli directly but the ls cmd does not return anything, it just outputs to console
+        // perhaps we can monkey patch the ui.log function and get the data from there
+        child_process.exec('npm ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+          resolve(JSON.parse(stdout));
+        });
+      } catch (e) {
+        console.log('Error running "npm ls"', e);
+        reject(e);
+      }
     });
   }
 
