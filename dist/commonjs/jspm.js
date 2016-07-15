@@ -62,9 +62,26 @@ var JSPM = exports.JSPM = function () {
   };
 
   JSPM.prototype.getConfig = function getConfig(projectPath, packageJSONPath) {
-    var jspmModule = requireTaskPool(jspmTaskPath);
+    var _this3 = this;
 
-    return jspmModule.getConfig(projectPath, packageJSONPath);
+    var jspmModule = requireTaskPool(jspmTaskPath);
+    var jspmOptions = {
+      projectPath: projectPath,
+      packageJSONPath: packageJSONPath,
+      guid: (0, _guid.createGUID)()
+    };
+
+    ipcRenderer.on(jspmOptions.guid, function (event, msg) {
+      _this3._log(options, msg);
+    });
+
+    return jspmModule.getConfig(jspmOptions).then(function (config) {
+      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      return config;
+    }).catch(function (e) {
+      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      throw e;
+    });
   };
 
   JSPM.prototype._log = function _log(options, msg) {

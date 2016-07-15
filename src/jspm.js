@@ -1,3 +1,5 @@
+'use strict';
+
 const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
 const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
 const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
@@ -47,8 +49,25 @@ export class JSPM {
 
   getConfig(projectPath, packageJSONPath) {
     let jspmModule = requireTaskPool(jspmTaskPath);
+    let jspmOptions = {
+      projectPath: projectPath,
+      packageJSONPath: packageJSONPath,
+      guid: createGUID()
+    };
 
-    return jspmModule.getConfig(projectPath, packageJSONPath);
+    ipcRenderer.on(jspmOptions.guid, (event, msg) => {
+      this._log(options,msg);
+    });
+
+    return jspmModule.getConfig(jspmOptions)
+    .then(config => {
+      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      return config;
+    })
+    .catch(e => {
+      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      throw e;
+    })
   }
 
   _log(options, msg) {

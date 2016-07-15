@@ -1,9 +1,11 @@
+'use strict';
+
 const {ipcRenderer} = require('electron');
 const jspm = require('jspm');
 const jspmConfig = require('jspm/lib/config.js');
 const jspmCore = require('jspm/lib/core.js');
 const mainWindow = require('electron').remote.getGlobal('mainWindow');
-const semver = require('jspm/lib//semver');
+const semver = require('jspm/lib/semver');
 
 
 exports.install = function (deps, jspmOptions) {
@@ -30,10 +32,18 @@ exports.dlLoader = function (jspmOptions) {
 };
 
 
-exports.getConfig = function (projectPath, packageJSONPath) {
+exports.getConfig = function (jspmOptions) {
   let originalWorkingDirectory = process.cwd();
-  process.chdir(projectPath);
-  jspm.setPackagePath(packageJSONPath);
+  process.chdir(jspmOptions.projectPath);
+  jspm.setPackagePath(jspmOptions.packageJSONPath);
+
+  jspm.on('log', (type, msg) => {
+    if (type === 'err') {
+      throw new Error(msg);
+    } else {
+      mainWindow.webContents.send(jspmOptions.guid, msg);
+    }
+  });
 
   return jspmConfig.load()
     .then(() => {

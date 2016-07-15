@@ -7,6 +7,7 @@ var ipcRenderer = _require.ipcRenderer;
 var jspm = require('jspm');
 var jspmConfig = require('jspm/lib/config.js');
 var jspmCore = require('jspm/lib/core.js');
+var jspmRegistry = require('jspm/lib/registry.js');
 var mainWindow = require('electron').remote.getGlobal('mainWindow');
 var semver = require('jspm/lib//semver');
 
@@ -31,10 +32,20 @@ exports.dlLoader = function (jspmOptions) {
   return jspmCore.checkDlLoader();
 };
 
-exports.getConfig = function (projectPath, packageJSONPath) {
+exports.getConfig = function (jspmOptions) {
   var originalWorkingDirectory = process.cwd();
-  process.chdir(projectPath);
-  jspm.setPackagePath(packageJSONPath);
+  process.chdir(jspmOptions.projectPath);
+  jspm.setPackagePath(jspmOptions.packageJSONPath);
+
+  jspm.on('log', function (type, msg) {
+    if (type === 'err') {
+      throw new Error(msg);
+    } else {
+      mainWindow.webContents.send(jspmOptions.guid, msg);
+    }
+  });
+
+  jspmRegistry.registryClasses['jspm-git'] = {};
 
   return jspmConfig.load().then(function () {
     process.chdir(originalWorkingDirectory);
