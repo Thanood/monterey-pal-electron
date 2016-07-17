@@ -7,11 +7,15 @@ exports.JSPM = undefined;
 
 var _guid = require('./guid');
 
+var _fs = require('./fs');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
 var jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
 var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
+
+var path = System._nodeRequire('path');
 
 var JSPM = exports.JSPM = function () {
   function JSPM() {
@@ -21,33 +25,39 @@ var JSPM = exports.JSPM = function () {
   JSPM.prototype.install = function install(deps, options) {
     var _this = this;
 
-    var jspmOptions = options.jspmOptions || {};
     var jspmModule = requireTaskPool(jspmTaskPath);
 
-    jspmOptions.guid = (0, _guid.createGUID)();
-    ipcRenderer.on(jspmOptions.guid, function (event, msg) {
+    options.guid = (0, _guid.createGUID)();
+    ipcRenderer.on(options.guid, function (event, msg) {
       _this._log(options, msg);
     });
 
     this._log(options, 'installing...');
-    return jspmModule.install(deps, jspmOptions).then(function () {
-      ipcRenderer.removeAllListeners(jspmOptions.guid);
+    return jspmModule.install(deps, options).then(function () {
+      ipcRenderer.removeAllListeners(options.guid);
       _this._log(options, 'finished installing jspm packages');
     }).catch(function (error) {
-      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      ipcRenderer.removeAllListeners(options.guid);
       _this._log(options, 'error while installing jspm packages, ' + error.message);
       throw error;
     });
   };
 
+  JSPM.prototype.isJspmInstalled = function isJspmInstalled(packageJSONPath) {
+    return new _fs.Fs().fileExists(path.join(this.getJSPMRootPath(packageJSONPath), 'jspm.js'));
+  };
+
+  JSPM.prototype.getJSPMRootPath = function getJSPMRootPath(projectPath) {
+    return path.join(projectPath, 'node_modules', 'jspm');
+  };
+
   JSPM.prototype.downloadLoader = function downloadLoader(options) {
     var _this2 = this;
 
-    var jspmOptions = options.jspmOptions || {};
     var jspmModule = requireTaskPool(jspmTaskPath);
 
     this._log(options, 'downloading systemjs loader...');
-    return jspmModule.dlLoader(jspmOptions).then(function () {
+    return jspmModule.dlLoader(options).then(function () {
       _this2._log(options, 'downloaded systemjs loader');
     }).catch(function (err) {
       _this2._log(options, 'error while downloading systemjs loader, ' + err.message);
@@ -56,30 +66,26 @@ var JSPM = exports.JSPM = function () {
   };
 
   JSPM.prototype.getForks = function getForks(config, options) {
-    var jspmOptions = options.jspmOptions || {};
     var jspmModule = requireTaskPool(jspmTaskPath);
-    return jspmModule.getForks(config, jspmOptions);
+    return jspmModule.getForks(config, options);
   };
 
-  JSPM.prototype.getConfig = function getConfig(projectPath, packageJSONPath) {
+  JSPM.prototype.getConfig = function getConfig(options) {
     var _this3 = this;
 
     var jspmModule = requireTaskPool(jspmTaskPath);
-    var jspmOptions = {
-      projectPath: projectPath,
-      packageJSONPath: packageJSONPath,
-      guid: (0, _guid.createGUID)()
-    };
 
-    ipcRenderer.on(jspmOptions.guid, function (event, msg) {
+    options.guid = (0, _guid.createGUID)();
+
+    ipcRenderer.on(options.guid, function (event, msg) {
       _this3._log(options, msg);
     });
 
-    return jspmModule.getConfig(jspmOptions).then(function (config) {
-      ipcRenderer.removeAllListeners(jspmOptions.guid);
+    return jspmModule.getConfig(options).then(function (config) {
+      ipcRenderer.removeAllListeners(options.guid);
       return config;
     }).catch(function (e) {
-      ipcRenderer.removeAllListeners(jspmOptions.guid);
+      ipcRenderer.removeAllListeners(options.guid);
       throw e;
     });
   };
