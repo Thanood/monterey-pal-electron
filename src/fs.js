@@ -35,6 +35,18 @@ export class Fs {
     });
   }
 
+  async folderExists(p) {
+    return new Promise((resolve, reject) => {
+      fs.stat(p, function(err, stat) {
+        if (err) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  }
+
   async writeFile(path, content) {
     return new Promise((resolve, reject) => {
       fs.writeFile(path, content, (err) => {
