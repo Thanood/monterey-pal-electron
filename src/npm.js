@@ -1,4 +1,6 @@
 let child_process = System._nodeRequire('child_process');
+let path = System._nodeRequire('path');
+let os = System._nodeRequire('os');
 
 export class NPM {
   install (packages, options) {
@@ -49,10 +51,17 @@ export class NPM {
   ls(options) {
     return new Promise((resolve, reject) => {
       try {
+        // https://github.com/monterey-framework/monterey/issues/100
+        let npmPath = os.platform() === 'darwin' ? '/usr/local/bin/npm' : 'npm';
+
         // we can talk to the npm cli directly but the ls cmd does not return anything, it just outputs to console
         // perhaps we can monkey patch the ui.log function and get the data from there
-        child_process.exec('npm ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
-          resolve(JSON.parse(stdout));
+        child_process.exec(`${npmPath} ls --json --silent`, { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+          if (stdout) {
+            resolve(JSON.parse(stdout));
+          } else {
+            reject(error);
+          }
         });
       } catch (e) {
         console.log('Error running "npm ls"', e);

@@ -7,6 +7,8 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var child_process = System._nodeRequire('child_process');
+var path = System._nodeRequire('path');
+var os = System._nodeRequire('os');
 
 var NPM = exports.NPM = function () {
   function NPM() {
@@ -61,8 +63,14 @@ var NPM = exports.NPM = function () {
   NPM.prototype.ls = function ls(options) {
     return new Promise(function (resolve, reject) {
       try {
-        child_process.exec('npm ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
-          resolve(JSON.parse(stdout));
+        var npmPath = os.platform() === 'darwin' ? '/usr/local/bin/npm' : 'npm';
+
+        child_process.exec(npmPath + ' ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
+          if (stdout) {
+            resolve(JSON.parse(stdout));
+          } else {
+            reject(error);
+          }
         });
       } catch (e) {
         console.log('Error running "npm ls"', e);
