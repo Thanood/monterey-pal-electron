@@ -39,7 +39,7 @@ var NPM = exports.NPM = function () {
           _this._log(options, "finished installing...", error);
           process.chdir(originalWorkingDirectory);
 
-          if (error) reject(error);else resolve();
+          resolve();
         });
       });
     }).catch(function (error) {
@@ -73,7 +73,7 @@ var NPM = exports.NPM = function () {
 
   NPM.prototype._log = function _log(options, msg) {
     if (options.logCallback) {
-      options.logCallback({ level: 'custom', message: msg });
+      options.logCallback({ level: 'process', message: msg });
     }
   };
 

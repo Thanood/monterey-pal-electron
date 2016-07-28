@@ -92,7 +92,7 @@ var JSPM = exports.JSPM = function () {
 
   JSPM.prototype._log = function _log(options, msg) {
     if (options.logCallback) {
-      options.logCallback({ level: 'custom', message: msg });
+      options.logCallback({ level: 'process', message: msg });
     }
   };
 

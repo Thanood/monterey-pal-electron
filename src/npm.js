@@ -26,8 +26,7 @@ export class NPM {
             this._log(options, "finished installing...", error);
             process.chdir(originalWorkingDirectory);
 
-            if (error) reject(error);
-            else resolve();
+            resolve();
           });
         });
       }).catch(error => {
@@ -64,7 +63,7 @@ export class NPM {
 
   _log(options, msg) {
     if (options.logCallback) {
-      options.logCallback({level: 'custom', message: msg });
+      options.logCallback({level: 'process', message: msg });
     }
   }
 }
