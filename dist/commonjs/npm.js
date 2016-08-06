@@ -3,60 +3,40 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.NPM = undefined;
+
+var _guid = require('./guid');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var child_process = System._nodeRequire('child_process');
 var path = System._nodeRequire('path');
 var os = System._nodeRequire('os');
+var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+var npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
+var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
 
 var NPM = exports.NPM = function () {
   function NPM() {
     _classCallCheck(this, NPM);
   }
 
-  NPM.prototype.install = function install(packages, options) {
-    var _this = this;
+  NPM.prototype.install = function install(deps, options) {
 
-    var npm = System._nodeRequire('npm');
-    var npmOptions = options.npmOptions || {};
-
-    var originalWorkingDirectory = process.cwd();
-    process.chdir(npmOptions.workingDirectory || process.cwd());
-    this._log(options, 'chdir: ' + npmOptions.workingDirectory);
-
-    return this.load(npm, npmOptions).then(function () {
-
+    options.guid = (0, _guid.createGUID)();
+    ipcRenderer.on(options.guid, function (event, msg) {
       if (options.logCallback) {
-        npm.registry.log.on('log', function (message) {
-          options.logCallback(message);
-        });
+        options.logCallback(msg);
       }
-
-      _this._log(options, "loaded");
-      return new Promise(function (resolve, reject) {
-
-        _this._log(options, "installing...");
-        npm.commands.install(packages, function (error) {
-          _this._log(options, "finished installing...", error);
-          process.chdir(originalWorkingDirectory);
-
-          resolve();
-        });
-      });
-    }).catch(function (error) {
-      process.chdir(originalWorkingDirectory);
-      throw error;
     });
-  };
 
-  NPM.prototype.load = function load(npm, options, error) {
-    return new Promise(function (resolve, reject) {
-      npm.load(options, function (error) {
-        if (error) reject(error);else {
-          resolve();
-        }
-      });
+    var npmModule = requireTaskPool(npmTaskPath);
+
+    return npmModule.install(deps, options).then(function () {
+      ipcRenderer.removeAllListeners(options.guid);
+    }).catch(function (error) {
+      ipcRenderer.removeAllListeners(options.guid);
+      throw error;
     });
   };
 
@@ -77,12 +57,6 @@ var NPM = exports.NPM = function () {
         reject(e);
       }
     });
-  };
-
-  NPM.prototype._log = function _log(options, msg) {
-    if (options.logCallback) {
-      options.logCallback({ level: 'process', message: msg });
-    }
   };
 
   return NPM;

@@ -1,50 +1,28 @@
 let child_process = System._nodeRequire('child_process');
 let path = System._nodeRequire('path');
 let os = System._nodeRequire('os');
+let requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+let npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
+let ipcRenderer = System._nodeRequire('electron').ipcRenderer;
+import {createGUID} from './guid';
 
 export class NPM {
-  install (packages, options) {
-    const npm = System._nodeRequire('npm');
-    let npmOptions = options.npmOptions || {};
+  install (deps, options) {
 
-    let originalWorkingDirectory = process.cwd();
-    process.chdir(npmOptions.workingDirectory || process.cwd());
-    this._log(options, `chdir: ${npmOptions.workingDirectory}`);
+    options.guid = createGUID();
+    ipcRenderer.on(options.guid, (event, msg) => {
+      if (options.logCallback) {
+        options.logCallback(msg);
+      }
+    });
 
-    return this.load(npm, npmOptions)
-      .then(() => {
+    let npmModule = requireTaskPool(npmTaskPath);
 
-        if (options.logCallback) {
-          npm.registry.log.on('log', function (message) {
-            options.logCallback(message);
-          });
-        }
-
-        this._log(options, "loaded");
-        return new Promise((resolve, reject) => {
-
-          this._log(options, "installing...");
-          npm.commands.install(packages, error => {
-            this._log(options, "finished installing...", error);
-            process.chdir(originalWorkingDirectory);
-
-            resolve();
-          });
-        });
-      }).catch(error => {
-        process.chdir(originalWorkingDirectory);
-        throw error;
-      });
-  }
-
-  load (npm, options, error) {
-    return new Promise((resolve, reject) => {
-      npm.load(options, error => {
-        if (error) reject(error);
-        else {
-          resolve();
-        }
-      });
+    return npmModule.install(deps, options).then(()=> {
+      ipcRenderer.removeAllListeners(options.guid);
+    }).catch(error => {
+      ipcRenderer.removeAllListeners(options.guid);
+      throw error;
     });
   }
 
@@ -68,11 +46,5 @@ export class NPM {
         reject(e);
       }
     });
-  }
-
-  _log(options, msg) {
-    if (options.logCallback) {
-      options.logCallback({level: 'process', message: msg });
-    }
   }
 }
