@@ -6,6 +6,7 @@ import {Processes}     from './processes';
 import {NPM}           from './npm';
 import {JSPM}          from './jspm';
 import {OS}            from './os';
+import {Electron}      from './electron';
 
 export function initialize() {
   let _fs = new Fs();
@@ -15,8 +16,9 @@ export function initialize() {
   let _npm = new NPM();
   let _jspm = new JSPM();
   let _os = new OS();
+  let _electron = new Electron();
 
-  initializePAL((fs, session, aureliaCLI, processes, npm, jspm, os) => {
+  initializePAL((fs, session, aureliaCLI, processes, npm, jspm, os, electron) => {
     Object.assign(fs, _fs);
     Object.assign(fs, _fs.constructor.prototype);
     Object.assign(aureliaCLI, _aureliaCLI);
@@ -31,5 +33,7 @@ export function initialize() {
     Object.assign(jspm, _jspm.constructor.prototype);
     Object.assign(os, _os)
     Object.assign(os, _os.constructor.prototype);
+    Object.assign(electron, _electron)
+    Object.assign(electron, _electron.constructor.prototype);
   });
 }
