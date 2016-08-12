@@ -7,6 +7,14 @@ export class OS {
     return os.platform();
   }
 
+  getEnv(key) {
+    if (key) {
+      return process.env[key];
+    } else {
+      return process.env;
+    }
+  }
+
   getNodeVersion() {
     return process.versions.node;
   }

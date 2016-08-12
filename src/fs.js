@@ -22,7 +22,7 @@ export class Fs {
   }
 
   async fileExists(p) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       fs.stat(p, function(err, stat) {
         if (err === null) {
           resolve(true);

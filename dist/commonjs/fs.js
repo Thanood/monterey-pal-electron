@@ -60,7 +60,7 @@ var Fs = exports.Fs = function () {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              return _context2.abrupt('return', new Promise(function (resolve) {
+              return _context2.abrupt('return', new Promise(function (resolve, reject) {
                 fs.stat(p, function (err, stat) {
                   if (err === null) {
                     resolve(true);

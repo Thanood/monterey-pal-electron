@@ -19,6 +19,14 @@ var OS = exports.OS = function () {
     return os.platform();
   };
 
+  OS.prototype.getEnv = function getEnv(key) {
+    if (key) {
+      return process.env[key];
+    } else {
+      return process.env;
+    }
+  };
+
   OS.prototype.getNodeVersion = function getNodeVersion() {
     return process.versions.node;
   };
