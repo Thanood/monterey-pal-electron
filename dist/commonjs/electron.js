@@ -8,7 +8,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var electron = System._nodeRequire('electron');
 var pty = System._nodeRequire('pty.js');
-var xterm = System._nodeRequire('xTerm');
+var xterm = System._nodeRequire('xterm');
 
 var Electron = exports.Electron = function () {
   function Electron() {
