@@ -9,6 +9,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var os = System._nodeRequire('os');
 var child_process = System._nodeRequire('child_process');
 var treeKill = System._nodeRequire('tree-kill');
+var shell = System._nodeRequire('electron').shell;
 
 var OS = exports.OS = function () {
   function OS() {
@@ -83,6 +84,10 @@ var OS = exports.OS = function () {
         }
       });
     });
+  };
+
+  OS.prototype.openItem = function openItem(path) {
+    shell.openItem(path);
   };
 
   return OS;

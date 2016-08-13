@@ -12,6 +12,7 @@ var fs = System._nodeRequire('fs');
 var dialog = System._nodeRequire('electron').remote.dialog;
 var path = System._nodeRequire('path');
 var https = System._nodeRequire('https');
+var http = System._nodeRequire('http');
 var temp = System._nodeRequire('temp').track();
 var yauzl = System._nodeRequire('yauzl');
 var mkdirp = System._nodeRequire('mkdirp');
@@ -87,19 +88,16 @@ var Fs = exports.Fs = function () {
     return fileExists;
   }();
 
-  Fs.prototype.folderExists = function () {
+  Fs.prototype.createFolder = function () {
     var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(p) {
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
               return _context3.abrupt('return', new Promise(function (resolve, reject) {
-                fs.stat(p, function (err, stat) {
-                  if (err) {
-                    resolve(false);
-                  } else {
-                    resolve(true);
-                  }
+                mkdirp(p, function (err) {
+                  if (err) reject(err);
+                  resolve();
                 });
               }));
 
@@ -111,24 +109,26 @@ var Fs = exports.Fs = function () {
       }, _callee3, this);
     }));
 
-    function folderExists(_x3) {
+    function createFolder(_x3) {
       return _ref3.apply(this, arguments);
     }
 
-    return folderExists;
+    return createFolder;
   }();
 
-  Fs.prototype.writeFile = function () {
-    var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(path, content) {
+  Fs.prototype.folderExists = function () {
+    var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(p) {
       return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
               return _context4.abrupt('return', new Promise(function (resolve, reject) {
-                fs.writeFile(path, content, function (err) {
-                  if (err) reject(err);
-
-                  resolve();
+                fs.stat(p, function (err, stat) {
+                  if (err) {
+                    resolve(false);
+                  } else {
+                    resolve(true);
+                  }
                 });
               }));
 
@@ -140,22 +140,24 @@ var Fs = exports.Fs = function () {
       }, _callee4, this);
     }));
 
-    function writeFile(_x4, _x5) {
+    function folderExists(_x4) {
       return _ref4.apply(this, arguments);
     }
 
-    return writeFile;
+    return folderExists;
   }();
 
-  Fs.prototype.showOpenDialog = function () {
-    var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(config) {
+  Fs.prototype.writeFile = function () {
+    var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(path, content) {
       return regeneratorRuntime.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
-              return _context5.abrupt('return', new Promise(function (resolve) {
-                dialog.showOpenDialog(config, function (c) {
-                  return resolve(c);
+              return _context5.abrupt('return', new Promise(function (resolve, reject) {
+                fs.writeFile(path, content, function (err) {
+                  if (err) reject(err);
+
+                  resolve();
                 });
               }));
 
@@ -167,8 +169,35 @@ var Fs = exports.Fs = function () {
       }, _callee5, this);
     }));
 
-    function showOpenDialog(_x6) {
+    function writeFile(_x5, _x6) {
       return _ref5.apply(this, arguments);
+    }
+
+    return writeFile;
+  }();
+
+  Fs.prototype.showOpenDialog = function () {
+    var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(config) {
+      return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              return _context6.abrupt('return', new Promise(function (resolve) {
+                dialog.showOpenDialog(config, function (c) {
+                  return resolve(c);
+                });
+              }));
+
+            case 1:
+            case 'end':
+              return _context6.stop();
+          }
+        }
+      }, _callee6, this);
+    }));
+
+    function showOpenDialog(_x7) {
+      return _ref6.apply(this, arguments);
     }
 
     return showOpenDialog;
@@ -196,12 +225,12 @@ var Fs = exports.Fs = function () {
   };
 
   Fs.prototype.getTempFile = function () {
-    var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6() {
-      return regeneratorRuntime.wrap(function _callee6$(_context6) {
+    var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
+      return regeneratorRuntime.wrap(function _callee7$(_context7) {
         while (1) {
-          switch (_context6.prev = _context6.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
-              return _context6.abrupt('return', new Promise(function (resolve, reject) {
+              return _context7.abrupt('return', new Promise(function (resolve, reject) {
                 temp.open('monterey', function (err, info) {
                   if (err) {
                     reject(err);
@@ -214,26 +243,26 @@ var Fs = exports.Fs = function () {
 
             case 1:
             case 'end':
-              return _context6.stop();
+              return _context7.stop();
           }
         }
-      }, _callee6, this);
+      }, _callee7, this);
     }));
 
     function getTempFile() {
-      return _ref6.apply(this, arguments);
+      return _ref7.apply(this, arguments);
     }
 
     return getTempFile;
   }();
 
   Fs.prototype.getTempFolder = function () {
-    var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
-      return regeneratorRuntime.wrap(function _callee7$(_context7) {
+    var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8() {
+      return regeneratorRuntime.wrap(function _callee8$(_context8) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
-              return _context7.abrupt('return', new Promise(function (resolve, reject) {
+              return _context8.abrupt('return', new Promise(function (resolve, reject) {
                 temp.mkdir('monterey', function (err, dirPath) {
                   if (err) {
                     reject(err);
@@ -246,26 +275,26 @@ var Fs = exports.Fs = function () {
 
             case 1:
             case 'end':
-              return _context7.stop();
+              return _context8.stop();
           }
         }
-      }, _callee7, this);
+      }, _callee8, this);
     }));
 
     function getTempFolder() {
-      return _ref7.apply(this, arguments);
+      return _ref8.apply(this, arguments);
     }
 
     return getTempFolder;
   }();
 
   Fs.prototype.move = function () {
-    var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(from, to) {
-      return regeneratorRuntime.wrap(function _callee8$(_context8) {
+    var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(from, to) {
+      return regeneratorRuntime.wrap(function _callee9$(_context9) {
         while (1) {
-          switch (_context8.prev = _context8.next) {
+          switch (_context9.prev = _context9.next) {
             case 0:
-              return _context8.abrupt('return', new Promise(function (resolve, reject) {
+              return _context9.abrupt('return', new Promise(function (resolve, reject) {
                 mv(from, to, { mkdirp: true }, function (err) {
                   if (err) {
                     reject(err);
@@ -278,14 +307,14 @@ var Fs = exports.Fs = function () {
 
             case 1:
             case 'end':
-              return _context8.stop();
+              return _context9.stop();
           }
         }
-      }, _callee8, this);
+      }, _callee9, this);
     }));
 
-    function move(_x7, _x8) {
-      return _ref8.apply(this, arguments);
+    function move(_x8, _x9) {
+      return _ref9.apply(this, arguments);
     }
 
     return move;
@@ -300,14 +329,14 @@ var Fs = exports.Fs = function () {
   };
 
   Fs.prototype.unzip = function () {
-    var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(zipPath, outPath) {
+    var _ref10 = _asyncToGenerator(regeneratorRuntime.mark(function _callee10(zipPath, outPath) {
       var _this = this;
 
-      return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      return regeneratorRuntime.wrap(function _callee10$(_context10) {
         while (1) {
-          switch (_context9.prev = _context9.next) {
+          switch (_context10.prev = _context10.next) {
             case 0:
-              return _context9.abrupt('return', new Promise(function (resolve, reject) {
+              return _context10.abrupt('return', new Promise(function (resolve, reject) {
                 yauzl.open(zipPath, { autoClose: true, lazyEntries: true }, function (err, zipfile) {
                   if (err) reject(err);
                   zipfile.readEntry();
@@ -342,26 +371,26 @@ var Fs = exports.Fs = function () {
 
             case 1:
             case 'end':
-              return _context9.stop();
+              return _context10.stop();
           }
         }
-      }, _callee9, this);
+      }, _callee10, this);
     }));
 
-    function unzip(_x9, _x10) {
-      return _ref9.apply(this, arguments);
+    function unzip(_x10, _x11) {
+      return _ref10.apply(this, arguments);
     }
 
     return unzip;
   }();
 
   Fs.prototype.getDirectories = function () {
-    var _ref10 = _asyncToGenerator(regeneratorRuntime.mark(function _callee10(p) {
-      return regeneratorRuntime.wrap(function _callee10$(_context10) {
+    var _ref11 = _asyncToGenerator(regeneratorRuntime.mark(function _callee11(p) {
+      return regeneratorRuntime.wrap(function _callee11$(_context11) {
         while (1) {
-          switch (_context10.prev = _context10.next) {
+          switch (_context11.prev = _context11.next) {
             case 0:
-              return _context10.abrupt('return', new Promise(function (resolve, reject) {
+              return _context11.abrupt('return', new Promise(function (resolve, reject) {
                 fs.readdir(p, function (err, files) {
                   if (err) {
                     reject(err);
@@ -376,14 +405,14 @@ var Fs = exports.Fs = function () {
 
             case 1:
             case 'end':
-              return _context10.stop();
+              return _context11.stop();
           }
         }
-      }, _callee10, this);
+      }, _callee11, this);
     }));
 
-    function getDirectories(_x11) {
-      return _ref10.apply(this, arguments);
+    function getDirectories(_x12) {
+      return _ref11.apply(this, arguments);
     }
 
     return getDirectories;
@@ -397,38 +426,38 @@ var Fs = exports.Fs = function () {
     var _this2 = this;
 
     return new Promise(function () {
-      var _ref11 = _asyncToGenerator(regeneratorRuntime.mark(function _callee11(resolve, reject) {
+      var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee12(resolve, reject) {
         var file;
-        return regeneratorRuntime.wrap(function _callee11$(_context11) {
+        return regeneratorRuntime.wrap(function _callee12$(_context12) {
           while (1) {
-            switch (_context11.prev = _context11.next) {
+            switch (_context12.prev = _context12.next) {
               case 0:
                 file = fs.createWriteStream(targetPath);
-                _context11.prev = 1;
-                _context11.next = 4;
+                _context12.prev = 1;
+                _context12.next = 4;
                 return _this2._downloadFile(file, url, targetPath);
 
               case 4:
                 resolve();
-                _context11.next = 10;
+                _context12.next = 10;
                 break;
 
               case 7:
-                _context11.prev = 7;
-                _context11.t0 = _context11['catch'](1);
+                _context12.prev = 7;
+                _context12.t0 = _context12['catch'](1);
 
-                reject(_context11.t0);
+                reject(_context12.t0);
 
               case 10:
               case 'end':
-                return _context11.stop();
+                return _context12.stop();
             }
           }
-        }, _callee11, _this2, [[1, 7]]);
+        }, _callee12, _this2, [[1, 7]]);
       }));
 
-      return function (_x12, _x13) {
-        return _ref11.apply(this, arguments);
+      return function (_x13, _x14) {
+        return _ref12.apply(this, arguments);
       };
     }());
   };
@@ -441,7 +470,7 @@ var Fs = exports.Fs = function () {
       opts.headers = {
         'User-Agent': 'electron'
       };
-      https.get(opts, function (response) {
+      (url.startsWith('http') ? http : https).get(opts, function (response) {
         if (response.statusCode === 200) {
           response.on('data', function (data) {
             stream.write(data);
