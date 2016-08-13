@@ -1,6 +1,7 @@
 const os = System._nodeRequire('os');
-let child_process = System._nodeRequire('child_process');
-let treeKill = System._nodeRequire('tree-kill');
+const child_process = System._nodeRequire('child_process');
+const treeKill = System._nodeRequire('tree-kill');
+const shell = System._nodeRequire('electron').shell;
 
 export class OS {
   getPlatform() {
@@ -71,5 +72,9 @@ export class OS {
         }
       });
     });
+  }
+
+  openItem(path) {
+    shell.openItem(path);
   }
 }
