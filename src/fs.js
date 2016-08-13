@@ -207,7 +207,7 @@ export class Fs {
       opts.headers = {
         'User-Agent': 'electron'
       };
-      (url.startsWith('http') ? http : https).get(opts, (response) => {
+      (url.startsWith('https') ? https : http).get(opts, (response) => {
         if (response.statusCode === 200) {
           response.on('data', function(data) {
             stream.write(data);

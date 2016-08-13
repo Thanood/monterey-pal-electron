@@ -470,7 +470,7 @@ var Fs = exports.Fs = function () {
       opts.headers = {
         'User-Agent': 'electron'
       };
-      (url.startsWith('http') ? http : https).get(opts, function (response) {
+      (url.startsWith('https') ? https : http).get(opts, function (response) {
         if (response.statusCode === 200) {
           response.on('data', function (data) {
             stream.write(data);
