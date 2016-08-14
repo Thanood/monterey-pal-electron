@@ -26,6 +26,40 @@ export class NPM {
     });
   }
 
+  setConfig(setting, value) {
+    return new Promise((resolve, reject) => {
+      try {
+        child_process.exec(`npm config set ${setting} ${value}`, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+          if (!error) {
+            resolve(stdout);
+          } else {
+            reject(error);
+          }
+        });
+      } catch (e) {
+        console.log(`Error running "npm config set ${setting} ${value}"`, e);
+        reject(e);
+      }
+    });
+  }
+
+  getConfig(setting) {
+    return new Promise((resolve, reject) => {
+      try {
+        child_process.exec(`npm config get ${setting}`, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+          if (!error) {
+            resolve(stdout);
+          } else {
+            reject(error);
+          }
+        });
+      } catch (e) {
+        console.log(`Error running "npm config get ${setting}"`, e);
+        reject(e);
+      }
+    });
+  }
+
   ls(options) {
     return new Promise((resolve, reject) => {
       try {

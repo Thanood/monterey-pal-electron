@@ -1,6 +1,6 @@
 {
   "name": "monterey-pal-electron",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "",
   "main": "dist/commonjs/index.js",
   "scripts": {

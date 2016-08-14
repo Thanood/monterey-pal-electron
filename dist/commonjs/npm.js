@@ -40,6 +40,40 @@ var NPM = exports.NPM = function () {
     });
   };
 
+  NPM.prototype.setConfig = function setConfig(setting, value) {
+    return new Promise(function (resolve, reject) {
+      try {
+        child_process.exec('npm config set ' + setting + ' ' + value, { maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
+          if (!error) {
+            resolve(stdout);
+          } else {
+            reject(error);
+          }
+        });
+      } catch (e) {
+        console.log('Error running "npm config set ' + setting + ' ' + value + '"', e);
+        reject(e);
+      }
+    });
+  };
+
+  NPM.prototype.getConfig = function getConfig(setting) {
+    return new Promise(function (resolve, reject) {
+      try {
+        child_process.exec('npm config get ' + setting, { maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
+          if (!error) {
+            resolve(stdout);
+          } else {
+            reject(error);
+          }
+        });
+      } catch (e) {
+        console.log('Error running "npm config get ' + setting + '"', e);
+        reject(e);
+      }
+    });
+  };
+
   NPM.prototype.ls = function ls(options) {
     return new Promise(function (resolve, reject) {
       try {
