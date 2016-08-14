@@ -1,6 +1,5 @@
 const electron = System._nodeRequire('electron');
-const pty = System._nodeRequire('pty.js');
-const xterm = System._nodeRequire('xterm');
+
 
 export class Electron {
   getIpcRenderer() {
@@ -8,10 +7,12 @@ export class Electron {
   }
 
   getPty() {
+    var pty = System._nodeRequire('pty.js');
     return pty;
   }
 
   getxTerm() {
+    var xterm = System._nodeRequire('xterm');
     return xterm;
   }
 }

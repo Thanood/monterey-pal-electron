@@ -65,7 +65,7 @@ export class OS {
   exec(cmd, options) {
     return new Promise((resolve, reject) => {
       child_process.exec(cmd, options, (error, stdout, stderr) => {
-        if (stdout) {
+        if (!error) {
           resolve(stdout);
         } else {
           reject(error);

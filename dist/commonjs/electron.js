@@ -7,8 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var electron = System._nodeRequire('electron');
-var pty = System._nodeRequire('pty.js');
-var xterm = System._nodeRequire('xterm');
 
 var Electron = exports.Electron = function () {
   function Electron() {
@@ -20,10 +18,12 @@ var Electron = exports.Electron = function () {
   };
 
   Electron.prototype.getPty = function getPty() {
+    var pty = System._nodeRequire('pty.js');
     return pty;
   };
 
   Electron.prototype.getxTerm = function getxTerm() {
+    var xterm = System._nodeRequire('xterm');
     return xterm;
   };
 

@@ -77,7 +77,7 @@ var OS = exports.OS = function () {
   OS.prototype.exec = function exec(cmd, options) {
     return new Promise(function (resolve, reject) {
       child_process.exec(cmd, options, function (error, stdout, stderr) {
-        if (stdout) {
+        if (!error) {
           resolve(stdout);
         } else {
           reject(error);
