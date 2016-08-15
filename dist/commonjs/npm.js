@@ -77,9 +77,7 @@ var NPM = exports.NPM = function () {
   NPM.prototype.ls = function ls(options) {
     return new Promise(function (resolve, reject) {
       try {
-        var npmPath = os.platform() === 'darwin' ? '/usr/local/bin/npm' : 'npm';
-
-        child_process.exec(npmPath + ' ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
+        child_process.exec('npm ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
           if (stdout) {
             resolve(JSON.parse(stdout));
           } else {
