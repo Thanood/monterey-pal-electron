@@ -14,6 +14,8 @@ var shell = System._nodeRequire('electron').shell;
 var OS = exports.OS = function () {
   function OS() {
     _classCallCheck(this, OS);
+
+    this.processes = [];
   }
 
   OS.prototype.getPlatform = function getPlatform() {
@@ -64,6 +66,8 @@ var OS = exports.OS = function () {
       resolve(code);
     });
 
+    this.processes.push(proc);
+
     return {
       process: proc,
       completion: promise
@@ -71,7 +75,18 @@ var OS = exports.OS = function () {
   };
 
   OS.prototype.kill = function kill(process) {
-    treeKill(process.pid, 'SIGKILL');
+    var _this = this;
+
+    return new Promise(function (resolve) {
+      treeKill(process.pid, 'SIGKILL', function () {
+        var index = _this.processes.indexOf(process);
+        if (index > -1) {
+          _this.processes.splice(index, 1);
+        }
+
+        resolve();
+      });
+    });
   };
 
   OS.prototype.exec = function exec(cmd, options) {

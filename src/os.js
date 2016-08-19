@@ -4,6 +4,8 @@ const treeKill = System._nodeRequire('tree-kill');
 const shell = System._nodeRequire('electron').shell;
 
 export class OS {
+  processes = [];
+
   getPlatform() {
     return os.platform();
   }
@@ -51,6 +53,8 @@ export class OS {
       resolve(code);
     });
 
+    this.processes.push(proc);
+
     return {
       process: proc,
       completion: promise
@@ -58,7 +62,17 @@ export class OS {
   }
 
   kill(process) {
-    treeKill(process.pid, 'SIGKILL');
+    return new Promise(resolve => {
+      treeKill(process.pid, 'SIGKILL', () => {
+        // remove process from processes list
+        let index = this.processes.indexOf(process);
+        if(index > -1) {
+          this.processes.splice(index, 1);
+        }
+
+        resolve();
+      });
+    });
   }
 
   // execute command, resolve when everything has been written to stdout / stderr
