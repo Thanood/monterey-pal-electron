@@ -9,6 +9,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var storage = System._nodeRequire('electron-json-storage');
+var remote = System._nodeRequire('electron').remote;
 
 var Session = exports.Session = function () {
   function Session() {
@@ -111,6 +112,10 @@ var Session = exports.Session = function () {
 
     return has;
   }();
+
+  Session.prototype.getEnv = function getEnv() {
+    return remote.getGlobal('environment');
+  };
 
   return Session;
 }();

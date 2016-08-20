@@ -1,4 +1,5 @@
 const storage = System._nodeRequire('electron-json-storage');
+const remote   = System._nodeRequire('electron').remote;
 
 export class Session {
 
@@ -40,5 +41,9 @@ export class Session {
         resolve(hasKey);
       });
     });
+  }
+
+  getEnv() {
+    return remote.getGlobal('environment');
   }
 }

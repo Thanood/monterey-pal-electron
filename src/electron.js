@@ -1,5 +1,5 @@
 const electron = System._nodeRequire('electron');
-
+const remote   = System._nodeRequire('electron').remote;
 
 export class Electron {
   getIpcRenderer() {
@@ -14,5 +14,10 @@ export class Electron {
   getxTerm() {
     var xterm = System._nodeRequire('xterm');
     return xterm;
+  }
+
+  getPath(name) {
+    let app = remote.getGlobal('app');
+    return app.getPath(name);
   }
 }
