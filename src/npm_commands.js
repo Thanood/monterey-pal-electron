@@ -1,28 +1,29 @@
 let mainWindow = require('electron').remote.getGlobal('mainWindow');
+let node_modules = require('electron').remote.getGlobal('node_modules');
 
 exports.install = function (packages, options) {
-  const npm = require('npm');
+  const npm = require(require('module')._resolveFilename('npm', { paths: [node_modules] }));
   let npmOptions = options.npmOptions || {};
 
   let originalWorkingDirectory = process.cwd();
   process.chdir(npmOptions.workingDirectory || process.cwd());
-  exports._log(options, `chdir: ${npmOptions.workingDirectory}`);
+  _log(options, `chdir: ${npmOptions.workingDirectory}`);
 
   return exports.load(npm, npmOptions)
     .then(() => {
 
       npm.registry.log.on('log', (msg) => {
-        exports._log(options, msg.message, msg.level);
+        _log(options, msg.message, msg.level);
       });
 
-      exports._log(options, "loaded");
+      _log(options, "loaded");
       return new Promise((resolve, reject) => {
 
-        exports._log(options, "installing...");
+        _log(options, "installing...");
         npm.commands.install(packages, error => {
           console.log(packages);
           console.log(error);
-          exports._log(options, "finished installing...");
+          _log(options, "finished installing...");
           process.chdir(originalWorkingDirectory);
 
           resolve();
@@ -45,6 +46,6 @@ exports.load = function (npm, options, error) {
   });
 }
 
-exports._log = function (options, msg, level = 'process') {
+function _log (options, msg, level = 'process') {
   mainWindow.webContents.send(options.guid, { level: level, message: msg});
 }

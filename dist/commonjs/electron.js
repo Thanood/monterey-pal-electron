@@ -33,5 +33,9 @@ var Electron = exports.Electron = function () {
     return app.getPath(name);
   };
 
+  Electron.prototype.getGlobal = function getGlobal(name) {
+    return remote.getGlobal(name);
+  };
+
   return Electron;
 }();

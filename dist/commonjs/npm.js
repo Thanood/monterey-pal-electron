@@ -78,8 +78,10 @@ var NPM = exports.NPM = function () {
     return new Promise(function (resolve, reject) {
       try {
         child_process.exec('npm ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
-          if (stdout) {
+          if (!error && stdout) {
             resolve(JSON.parse(stdout));
+          } else if (!error && !stdout) {
+            resolve('');
           } else {
             reject(error);
           }

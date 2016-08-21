@@ -33,7 +33,13 @@ var JSPM = exports.JSPM = function () {
     });
 
     this._log(options, 'installing...');
-    return jspmModule.install(deps, options).then(function () {
+    return jspmModule.install(deps, {
+      guid: options.guid,
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }
+    }).then(function () {
       ipcRenderer.removeAllListeners(options.guid);
       _this._log(options, 'finished installing jspm packages');
     }).catch(function (error) {
@@ -57,7 +63,12 @@ var JSPM = exports.JSPM = function () {
     var jspmModule = requireTaskPool(jspmTaskPath);
 
     this._log(options, 'downloading systemjs loader...');
-    return jspmModule.dlLoader(options).then(function () {
+    return jspmModule.dlLoader({
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }
+    }).then(function () {
       _this2._log(options, 'downloaded systemjs loader');
     }).catch(function (err) {
       _this2._log(options, 'error while downloading systemjs loader, ' + err.message);
@@ -67,7 +78,12 @@ var JSPM = exports.JSPM = function () {
 
   JSPM.prototype.getForks = function getForks(config, options) {
     var jspmModule = requireTaskPool(jspmTaskPath);
-    return jspmModule.getForks(config, options);
+    return jspmModule.getForks(config, {
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }
+    });
   };
 
   JSPM.prototype.getConfig = function getConfig(options) {
@@ -81,7 +97,13 @@ var JSPM = exports.JSPM = function () {
       _this3._log(options, msg);
     });
 
-    return jspmModule.getConfig(options).then(function (config) {
+    return jspmModule.getConfig({
+      guid: options.guid,
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }
+    }).then(function (config) {
       ipcRenderer.removeAllListeners(options.guid);
       return config;
     }).catch(function (e) {

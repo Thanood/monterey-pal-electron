@@ -18,7 +18,13 @@ export class JSPM {
     });
 
     this._log(options, 'installing...');
-    return jspmModule.install(deps, options).then(()=> {
+    return jspmModule.install(deps, {
+      guid: options.guid,
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }  
+    }).then(()=> {
       ipcRenderer.removeAllListeners(options.guid);
       this._log(options, 'finished installing jspm packages');
     }).catch(error => {
@@ -40,7 +46,12 @@ export class JSPM {
     let jspmModule = requireTaskPool(jspmTaskPath);
 
     this._log(options, 'downloading systemjs loader...');
-    return jspmModule.dlLoader(options)
+    return jspmModule.dlLoader({
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }  
+    })
     .then(() => {
       this._log(options, `downloaded systemjs loader`);
     }).catch(err => {
@@ -51,7 +62,12 @@ export class JSPM {
 
   getForks(config, options) {
     let jspmModule = requireTaskPool(jspmTaskPath);
-    return jspmModule.getForks(config, options)
+    return jspmModule.getForks(config, {
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }  
+    })
   }
 
   getConfig(options) {
@@ -63,7 +79,13 @@ export class JSPM {
       this._log(options,msg);
     });
 
-    return jspmModule.getConfig(options)
+    return jspmModule.getConfig({
+      guid: options.guid,
+      jspmOptions: options.jspmOptions,
+      project: {
+        packageJSONPath: options.project.packageJSONPath
+      }  
+    })
     .then(config => {
       ipcRenderer.removeAllListeners(options.guid);
       return config;

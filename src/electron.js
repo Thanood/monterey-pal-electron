@@ -20,4 +20,8 @@ export class Electron {
     let app = remote.getGlobal('app');
     return app.getPath(name);
   }
+
+  getGlobal(name) {
+    return remote.getGlobal(name);
+  }
 }

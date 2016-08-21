@@ -68,8 +68,10 @@ export class NPM {
         // we can talk to the npm cli directly but the ls cmd does not return anything, it just outputs to console
         // perhaps we can monkey patch the ui.log function and get the data from there
         child_process.exec(`npm ls --json --silent`, { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
-          if (stdout) {
+          if (!error && stdout) {
             resolve(JSON.parse(stdout));
+          } else if (!error && !stdout) {
+            resolve('');
           } else {
             reject(error);
           }
