@@ -55,7 +55,7 @@ var OS = exports.OS = function () {
     });
 
     proc.stdout.on('data', function (data) {
-      stderr(data.toString());
+      stdout(data.toString());
     });
 
     proc.stderr.on('data', function (data) {

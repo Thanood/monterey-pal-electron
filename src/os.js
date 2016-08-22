@@ -42,7 +42,7 @@ export class OS {
     let promise = new Promise(r => resolve = r);
 
     proc.stdout.on('data', (data) => {
-      stderr(data.toString());
+      stdout(data.toString());
     });
 
     proc.stderr.on('data', (data) => {
