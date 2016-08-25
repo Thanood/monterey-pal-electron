@@ -52,9 +52,9 @@ var JSPM = exports.JSPM = function () {
     return new _fs.Fs().fileExists(path.join(this.getJSPMRootPath(packageJSONPath), 'jspm.js'));
   };
 
-  JSPM.prototype.getJSPMRootPath = function getJSPMRootPath(projectPath) {
+  JSPM.prototype.getJSPMRootPath = function getJSPMRootPath(packageJSONPath) {
     var path = System._nodeRequire('path');
-    return path.join(projectPath, 'node_modules', 'jspm');
+    return path.join(path.dirname(packageJSONPath), 'node_modules', 'jspm');
   };
 
   JSPM.prototype.downloadLoader = function downloadLoader(options) {

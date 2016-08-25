@@ -38,9 +38,9 @@ export class JSPM {
     return new Fs().fileExists(path.join(this.getJSPMRootPath(packageJSONPath), 'jspm.js'));
   }
 
-  getJSPMRootPath(projectPath) {
+  getJSPMRootPath(packageJSONPath) {
     const path = System._nodeRequire('path');
-    return path.join(projectPath, 'node_modules', 'jspm');
+    return path.join(path.dirname(packageJSONPath), 'node_modules', 'jspm');
   }
 
   downloadLoader(options) {
