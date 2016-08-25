@@ -1,7 +1,5 @@
-let mainWindow = require('electron').remote.getGlobal('mainWindow');
-let node_modules = require('electron').remote.getGlobal('node_modules');
-
 exports.install = function (packages, options) {
+  let node_modules = require('electron').remote.getGlobal('node_modules');
   const npm = require(require('module')._resolveFilename('npm', { paths: [node_modules] }));
   let npmOptions = options.npmOptions || {};
 
@@ -47,5 +45,6 @@ exports.load = function (npm, options, error) {
 }
 
 function _log (options, msg, level = 'process') {
+  let mainWindow = require('electron').remote.getGlobal('mainWindow');
   mainWindow.webContents.send(options.guid, { level: level, message: msg});
 }

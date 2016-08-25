@@ -9,19 +9,15 @@ var _guid = require('./guid');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var child_process = System._nodeRequire('child_process');
-var path = System._nodeRequire('path');
-var os = System._nodeRequire('os');
-var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
-var npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
-var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
-
 var NPM = exports.NPM = function () {
   function NPM() {
     _classCallCheck(this, NPM);
   }
 
   NPM.prototype.install = function install(deps, options) {
+    var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
+    var npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
 
     options.guid = (0, _guid.createGUID)();
     ipcRenderer.on(options.guid, function (event, msg) {
@@ -41,6 +37,8 @@ var NPM = exports.NPM = function () {
   };
 
   NPM.prototype.setConfig = function setConfig(setting, value) {
+    var child_process = System._nodeRequire('child_process');
+
     return new Promise(function (resolve, reject) {
       try {
         child_process.exec('npm config set ' + setting + ' ' + value, { maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
@@ -58,6 +56,8 @@ var NPM = exports.NPM = function () {
   };
 
   NPM.prototype.getConfig = function getConfig(setting) {
+    var child_process = System._nodeRequire('child_process');
+
     return new Promise(function (resolve, reject) {
       try {
         child_process.exec('npm config get ' + setting, { maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {
@@ -75,6 +75,8 @@ var NPM = exports.NPM = function () {
   };
 
   NPM.prototype.ls = function ls(options) {
+    var child_process = System._nodeRequire('child_process');
+
     return new Promise(function (resolve, reject) {
       try {
         child_process.exec('npm ls --json --silent', { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, function (error, stdout, stderr) {

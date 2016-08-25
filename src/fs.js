@@ -1,17 +1,8 @@
-const fs       = System._nodeRequire('fs');
-const dialog   = System._nodeRequire('electron').remote.dialog;
-const path     = System._nodeRequire('path');
-const https    = System._nodeRequire('https');
-const http     = System._nodeRequire('http');
 const temp     = System._nodeRequire('temp').track();
-const yauzl    = System._nodeRequire('yauzl');
-const mkdirp   = System._nodeRequire('mkdirp');
-const mv       = System._nodeRequire('mv');
-const nodeUrl  = System._nodeRequire('url');
-const remote   = System._nodeRequire('electron').remote;
 
 export class Fs {
   async readFile(filePath) {
+    const fs = System._nodeRequire('fs');
     return new Promise((resolve, reject) => {
       fs.readFile(filePath, 'utf8', function(err, data) {
         if (err) {
@@ -23,6 +14,7 @@ export class Fs {
   }
 
   async fileExists(p) {
+    const fs = System._nodeRequire('fs');
     return new Promise((resolve, reject) => {
       fs.stat(p, function(err, stat) {
         if (err === null) {
@@ -37,6 +29,8 @@ export class Fs {
   }
 
   async createFolder(p) {
+    const mkdirp = System._nodeRequire('mkdirp');
+
     return new Promise((resolve, reject) => {
       mkdirp(p, function (err) {
         if (err) reject(err);
@@ -46,6 +40,7 @@ export class Fs {
   }
 
   async folderExists(p) {
+    const fs = System._nodeRequire('fs');
     return new Promise((resolve, reject) => {
       fs.stat(p, function(err, stat) {
         if (err) {
@@ -58,6 +53,7 @@ export class Fs {
   }
 
   async writeFile(path, content) {
+    const fs = System._nodeRequire('fs');
     return new Promise((resolve, reject) => {
       fs.writeFile(path, content, (err) => {
         if (err) reject(err);
@@ -68,12 +64,14 @@ export class Fs {
   }
 
   async showOpenDialog(config) {
+    const dialog   = System._nodeRequire('electron').remote.dialog;
     return new Promise(resolve => {
       dialog.showOpenDialog(config, c => resolve(c));
     });
   }
 
   getDirName(p) {
+    const path = System._nodeRequire('path');
     let split = p.split(path.sep);
     if (p.endsWith(path.sep)) {
       return split[split.length - 2];
@@ -83,10 +81,12 @@ export class Fs {
   }
 
   getFolderPath(p) {
+    const path = System._nodeRequire('path');
     return path.dirname(p);
   }
 
   join(...segments) {
+    const path = System._nodeRequire('path');
     return path.join.apply(null, segments);
   }
 
@@ -117,6 +117,8 @@ export class Fs {
   }
 
   async move(from, to) {
+    const mv = System._nodeRequire('mv');
+
     return new Promise((resolve, reject) => {
       mv(from, to, {mkdirp: true}, function(err) {
         if (err) {
@@ -130,14 +132,21 @@ export class Fs {
   }
 
   getRootDir() {
+    const remote = System._nodeRequire('electron').remote;
     return remote.getGlobal('rootDir');
   }
 
   normalize(p) {
+    const path = System._nodeRequire('path');
     return path.normalize(p);
   }
 
   async unzip(zipPath, outPath) {
+    const yauzl = System._nodeRequire('yauzl');
+    const fs = System._nodeRequire('fs');
+    const path = System._nodeRequire('path');
+    const mkdirp = System._nodeRequire('mkdirp');
+
     return new Promise((resolve, reject) => {
       yauzl.open(zipPath, {autoClose: true, lazyEntries: true}, (err, zipfile) => {
         if (err) reject(err);
@@ -171,6 +180,9 @@ export class Fs {
   }
 
   async getDirectories(p) {
+    const fs = System._nodeRequire('fs');
+    const path = System._nodeRequire('path');
+
     return new Promise((resolve, reject) => {
       fs.readdir(p, function(err, files) {
         if (err) {
@@ -190,6 +202,7 @@ export class Fs {
   }
 
   downloadFile(url, targetPath) {
+    const fs = System._nodeRequire('fs');
     return new Promise(async (resolve, reject) => {
       let file = fs.createWriteStream(targetPath);
       try {
@@ -202,6 +215,10 @@ export class Fs {
   }
 
   _downloadFile(stream, url, targetPath) {
+    const nodeUrl  = System._nodeRequire('url');
+    const http     = System._nodeRequire('http');
+    const https    = System._nodeRequire('https');
+    
     let promise = new Promise((resolve, reject) => {
       let opts = nodeUrl.parse(url);
       opts.headers = {

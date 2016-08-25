@@ -8,15 +8,13 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var storage = System._nodeRequire('electron-json-storage');
-var remote = System._nodeRequire('electron').remote;
-
 var Session = exports.Session = function () {
   function Session() {
     _classCallCheck(this, Session);
   }
 
   Session.prototype.get = function get(key) {
+    var storage = System._nodeRequire('electron-json-storage');
     return new Promise(function (resolve, reject) {
       storage.get(key, function (error, data) {
         if (error) reject(error);
@@ -28,10 +26,12 @@ var Session = exports.Session = function () {
 
   Session.prototype.set = function () {
     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(key, value) {
+      var storage;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              storage = System._nodeRequire('electron-json-storage');
               return _context.abrupt('return', new Promise(function (resolve, reject) {
                 storage.set(key, value, function (error) {
                   if (error) reject(error);
@@ -40,7 +40,7 @@ var Session = exports.Session = function () {
                 });
               }));
 
-            case 1:
+            case 2:
             case 'end':
               return _context.stop();
           }
@@ -57,10 +57,12 @@ var Session = exports.Session = function () {
 
   Session.prototype.clear = function () {
     var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2() {
+      var storage;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
+              storage = System._nodeRequire('electron-json-storage');
               return _context2.abrupt('return', new Promise(function (resolve) {
                 storage.clear(function (error) {
                   if (error) reject(error);
@@ -69,7 +71,7 @@ var Session = exports.Session = function () {
                 });
               }));
 
-            case 1:
+            case 2:
             case 'end':
               return _context2.stop();
           }
@@ -86,10 +88,12 @@ var Session = exports.Session = function () {
 
   Session.prototype.has = function () {
     var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(key) {
+      var storage;
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
+              storage = System._nodeRequire('electron-json-storage');
               return _context3.abrupt('return', new Promise(function (resolve) {
                 storage.has(key, function (error, hasKey) {
                   if (error) resolve(error);
@@ -98,7 +102,7 @@ var Session = exports.Session = function () {
                 });
               }));
 
-            case 1:
+            case 2:
             case 'end':
               return _context3.stop();
           }
@@ -114,6 +118,7 @@ var Session = exports.Session = function () {
   }();
 
   Session.prototype.getEnv = function getEnv() {
+    var remote = System._nodeRequire('electron').remote;
     return remote.getGlobal('environment');
   };
 

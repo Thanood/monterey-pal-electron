@@ -11,12 +11,6 @@ var _fs = require('./fs');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
-var jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
-var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
-
-var path = System._nodeRequire('path');
-
 var JSPM = exports.JSPM = function () {
   function JSPM() {
     _classCallCheck(this, JSPM);
@@ -24,6 +18,10 @@ var JSPM = exports.JSPM = function () {
 
   JSPM.prototype.install = function install(deps, options) {
     var _this = this;
+
+    var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    var jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
+    var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
 
     var jspmModule = requireTaskPool(jspmTaskPath);
 
@@ -50,16 +48,20 @@ var JSPM = exports.JSPM = function () {
   };
 
   JSPM.prototype.isJspmInstalled = function isJspmInstalled(packageJSONPath) {
+    var path = System._nodeRequire('path');
     return new _fs.Fs().fileExists(path.join(this.getJSPMRootPath(packageJSONPath), 'jspm.js'));
   };
 
   JSPM.prototype.getJSPMRootPath = function getJSPMRootPath(projectPath) {
+    var path = System._nodeRequire('path');
     return path.join(projectPath, 'node_modules', 'jspm');
   };
 
   JSPM.prototype.downloadLoader = function downloadLoader(options) {
     var _this2 = this;
 
+    var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    var jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     var jspmModule = requireTaskPool(jspmTaskPath);
 
     this._log(options, 'downloading systemjs loader...');
@@ -77,6 +79,8 @@ var JSPM = exports.JSPM = function () {
   };
 
   JSPM.prototype.getForks = function getForks(config, options) {
+    var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    var jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     var jspmModule = requireTaskPool(jspmTaskPath);
     return jspmModule.getForks(config, {
       jspmOptions: options.jspmOptions,
@@ -88,6 +92,10 @@ var JSPM = exports.JSPM = function () {
 
   JSPM.prototype.getConfig = function getConfig(options) {
     var _this3 = this;
+
+    var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    var jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
+    var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
 
     var jspmModule = requireTaskPool(jspmTaskPath);
 

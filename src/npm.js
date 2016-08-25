@@ -1,13 +1,10 @@
-let child_process = System._nodeRequire('child_process');
-let path = System._nodeRequire('path');
-let os = System._nodeRequire('os');
-let requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
-let npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
-let ipcRenderer = System._nodeRequire('electron').ipcRenderer;
 import {createGUID} from './guid';
 
 export class NPM {
   install (deps, options) {
+    let requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    let ipcRenderer = System._nodeRequire('electron').ipcRenderer;
+    let npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
 
     options.guid = createGUID();
     ipcRenderer.on(options.guid, (event, msg) => {
@@ -27,6 +24,8 @@ export class NPM {
   }
 
   setConfig(setting, value) {
+    let child_process = System._nodeRequire('child_process');
+
     return new Promise((resolve, reject) => {
       try {
         child_process.exec(`npm config set ${setting} ${value}`, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
@@ -44,6 +43,8 @@ export class NPM {
   }
 
   getConfig(setting) {
+    let child_process = System._nodeRequire('child_process');
+
     return new Promise((resolve, reject) => {
       try {
         child_process.exec(`npm config get ${setting}`, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
@@ -61,6 +62,8 @@ export class NPM {
   }
 
   ls(options) {
+    let child_process = System._nodeRequire('child_process');
+
     return new Promise((resolve, reject) => {
       try {
         // https://github.com/monterey-framework/monterey/issues/100

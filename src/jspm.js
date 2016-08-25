@@ -1,14 +1,13 @@
 'use strict';
-
-const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
-const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
-const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
 import {createGUID} from './guid';
-const path = System._nodeRequire('path');
 import {Fs} from './fs';
 
 export class JSPM {
   install (deps, options) {
+    const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
+    const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
+    
     let jspmModule = requireTaskPool(jspmTaskPath);
 
     //add guid we will use for messaging between window && add listener for the guid
@@ -35,14 +34,18 @@ export class JSPM {
   }
 
   isJspmInstalled(packageJSONPath) {
+    const path = System._nodeRequire('path');
     return new Fs().fileExists(path.join(this.getJSPMRootPath(packageJSONPath), 'jspm.js'));
   }
 
   getJSPMRootPath(projectPath) {
+    const path = System._nodeRequire('path');
     return path.join(projectPath, 'node_modules', 'jspm');
   }
 
   downloadLoader(options) {
+    const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     let jspmModule = requireTaskPool(jspmTaskPath);
 
     this._log(options, 'downloading systemjs loader...');
@@ -61,6 +64,8 @@ export class JSPM {
   }
 
   getForks(config, options) {
+    const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     let jspmModule = requireTaskPool(jspmTaskPath);
     return jspmModule.getForks(config, {
       jspmOptions: options.jspmOptions,
@@ -71,6 +76,10 @@ export class JSPM {
   }
 
   getConfig(options) {
+    const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
+    const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
+    const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
+
     let jspmModule = requireTaskPool(jspmTaskPath);
 
     options.guid = createGUID();

@@ -6,15 +6,13 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var electron = System._nodeRequire('electron');
-var remote = System._nodeRequire('electron').remote;
-
 var Electron = exports.Electron = function () {
   function Electron() {
     _classCallCheck(this, Electron);
   }
 
   Electron.prototype.getIpcRenderer = function getIpcRenderer() {
+    var electron = System._nodeRequire('electron');
     return electron.ipcRenderer;
   };
 
@@ -29,11 +27,13 @@ var Electron = exports.Electron = function () {
   };
 
   Electron.prototype.getPath = function getPath(name) {
+    var remote = System._nodeRequire('electron').remote;
     var app = remote.getGlobal('app');
     return app.getPath(name);
   };
 
   Electron.prototype.getGlobal = function getGlobal(name) {
+    var remote = System._nodeRequire('electron').remote;
     return remote.getGlobal(name);
   };
 

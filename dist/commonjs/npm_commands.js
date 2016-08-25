@@ -1,9 +1,7 @@
 'use strict';
 
-var mainWindow = require('electron').remote.getGlobal('mainWindow');
-var node_modules = require('electron').remote.getGlobal('node_modules');
-
 exports.install = function (packages, options) {
+  var node_modules = require('electron').remote.getGlobal('node_modules');
   var npm = require(require('module')._resolveFilename('npm', { paths: [node_modules] }));
   var npmOptions = options.npmOptions || {};
 
@@ -49,5 +47,6 @@ exports.load = function (npm, options, error) {
 function _log(options, msg) {
   var level = arguments.length <= 2 || arguments[2] === undefined ? 'process' : arguments[2];
 
+  var mainWindow = require('electron').remote.getGlobal('mainWindow');
   mainWindow.webContents.send(options.guid, { level: level, message: msg });
 }

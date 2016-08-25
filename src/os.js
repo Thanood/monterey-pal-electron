@@ -1,12 +1,8 @@
-const os = System._nodeRequire('os');
-const child_process = System._nodeRequire('child_process');
-const treeKill = System._nodeRequire('tree-kill');
-const shell = System._nodeRequire('electron').shell;
-
 export class OS {
   processes = [];
 
   getPlatform() {
+    const os = System._nodeRequire('os');
     return os.platform();
   }
 
@@ -37,6 +33,7 @@ export class OS {
 
   // executes command, streams stdout + stderr
   spawn(cmd, args, options, stdout, stderr) {
+    const child_process = System._nodeRequire('child_process');
     let proc = child_process.spawn(cmd, args, options);
     let resolve;
     let promise = new Promise(r => resolve = r);
@@ -62,6 +59,7 @@ export class OS {
   }
 
   kill(process) {
+    const treeKill = System._nodeRequire('tree-kill');
     return new Promise(resolve => {
       treeKill(process.pid, 'SIGKILL', () => {
         // remove process from processes list
@@ -77,6 +75,7 @@ export class OS {
 
   // execute command, resolve when everything has been written to stdout / stderr
   exec(cmd, options) {
+    const child_process = System._nodeRequire('child_process');
     return new Promise((resolve, reject) => {
       child_process.exec(cmd, options, (error, stdout, stderr) => {
         if (!error) {
@@ -89,6 +88,7 @@ export class OS {
   }
 
   openItem(path) {
+    const shell = System._nodeRequire('electron').shell;
     shell.openItem(path);
   }
 }

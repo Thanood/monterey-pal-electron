@@ -6,11 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var os = System._nodeRequire('os');
-var child_process = System._nodeRequire('child_process');
-var treeKill = System._nodeRequire('tree-kill');
-var shell = System._nodeRequire('electron').shell;
-
 var OS = exports.OS = function () {
   function OS() {
     _classCallCheck(this, OS);
@@ -19,6 +14,7 @@ var OS = exports.OS = function () {
   }
 
   OS.prototype.getPlatform = function getPlatform() {
+    var os = System._nodeRequire('os');
     return os.platform();
   };
 
@@ -48,6 +44,7 @@ var OS = exports.OS = function () {
   };
 
   OS.prototype.spawn = function spawn(cmd, args, options, stdout, stderr) {
+    var child_process = System._nodeRequire('child_process');
     var proc = child_process.spawn(cmd, args, options);
     var resolve = void 0;
     var promise = new Promise(function (r) {
@@ -77,6 +74,7 @@ var OS = exports.OS = function () {
   OS.prototype.kill = function kill(process) {
     var _this = this;
 
+    var treeKill = System._nodeRequire('tree-kill');
     return new Promise(function (resolve) {
       treeKill(process.pid, 'SIGKILL', function () {
         var index = _this.processes.indexOf(process);
@@ -90,6 +88,7 @@ var OS = exports.OS = function () {
   };
 
   OS.prototype.exec = function exec(cmd, options) {
+    var child_process = System._nodeRequire('child_process');
     return new Promise(function (resolve, reject) {
       child_process.exec(cmd, options, function (error, stdout, stderr) {
         if (!error) {
@@ -102,6 +101,7 @@ var OS = exports.OS = function () {
   };
 
   OS.prototype.openItem = function openItem(path) {
+    var shell = System._nodeRequire('electron').shell;
     shell.openItem(path);
   };
 
