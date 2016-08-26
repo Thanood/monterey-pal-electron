@@ -30,6 +30,8 @@ export class AureliaCLI {
 
     let pathToAddProject = model.path;
     await project.create({}, pathToAddProject);
+
+    return project;
   }
 
   async install(model) {

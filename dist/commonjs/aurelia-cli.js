@@ -56,6 +56,9 @@ var AureliaCLI = exports.AureliaCLI = function () {
                             return project.create({}, pathToAddProject);
 
                         case 18:
+                            return _context.abrupt('return', project);
+
+                        case 19:
                         case 'end':
                             return _context.stop();
                     }
