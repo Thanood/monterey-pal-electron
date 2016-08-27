@@ -1,28 +1,6 @@
 import {createGUID} from './guid';
 
 export class NPM {
-  install (deps, options) {
-    let requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
-    let ipcRenderer = System._nodeRequire('electron').ipcRenderer;
-    let npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
-
-    options.guid = createGUID();
-    ipcRenderer.on(options.guid, (event, msg) => {
-      if (options.logCallback) {
-        options.logCallback(msg);
-      }
-    });
-
-    let npmModule = requireTaskPool(npmTaskPath);
-
-    return npmModule.install(deps, options).then(()=> {
-      ipcRenderer.removeAllListeners(options.guid);
-    }).catch(error => {
-      ipcRenderer.removeAllListeners(options.guid);
-      throw error;
-    });
-  }
-
   setConfig(setting, value) {
     let child_process = System._nodeRequire('child_process');
 
@@ -66,10 +44,6 @@ export class NPM {
 
     return new Promise((resolve, reject) => {
       try {
-        // https://github.com/monterey-framework/monterey/issues/100
-
-        // we can talk to the npm cli directly but the ls cmd does not return anything, it just outputs to console
-        // perhaps we can monkey patch the ui.log function and get the data from there
         child_process.exec(`npm ls --json --silent`, { cwd: options.workingDirectory, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
           if (stdout) {
             resolve(JSON.parse(stdout));
