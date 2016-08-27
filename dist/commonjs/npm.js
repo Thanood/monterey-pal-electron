@@ -14,28 +14,6 @@ var NPM = exports.NPM = function () {
     _classCallCheck(this, NPM);
   }
 
-  NPM.prototype.install = function install(deps, options) {
-    var requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
-    var ipcRenderer = System._nodeRequire('electron').ipcRenderer;
-    var npmTaskPath = System._nodeRequire.resolve(__dirname + '/npm_commands.js');
-
-    options.guid = (0, _guid.createGUID)();
-    ipcRenderer.on(options.guid, function (event, msg) {
-      if (options.logCallback) {
-        options.logCallback(msg);
-      }
-    });
-
-    var npmModule = requireTaskPool(npmTaskPath);
-
-    return npmModule.install(deps, options).then(function () {
-      ipcRenderer.removeAllListeners(options.guid);
-    }).catch(function (error) {
-      ipcRenderer.removeAllListeners(options.guid);
-      throw error;
-    });
-  };
-
   NPM.prototype.setConfig = function setConfig(setting, value) {
     var child_process = System._nodeRequire('child_process');
 
