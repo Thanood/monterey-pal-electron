@@ -440,6 +440,81 @@ var Fs = exports.Fs = function () {
     temp.cleanupSync();
   };
 
+  Fs.prototype.access = function access(p, flags) {
+    var fs = System._nodeRequire('fs');
+    return new Promise(function (resolve, reject) {
+      fs.access(p, flags, function (err) {
+        if (err) {
+          resolve(false);
+          return;
+        }
+
+        resolve(true);
+      });
+    });
+  };
+
+  Fs.prototype.readdir = function readdir(p) {
+    var fs = System._nodeRequire('fs');
+    return new Promise(function (resolve, reject) {
+      fs.readdir(p, function (err, files) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(files);
+      });
+    });
+  };
+
+  Fs.prototype.unlink = function unlink(p) {
+    return new Promise(function (resolve, reject) {
+      fs.unlink(p, function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  };
+
+  Fs.prototype.stat = function stat(p) {
+    var fs = System._nodeRequire('fs');
+    return new Promise(function (resolve, reject) {
+      fs.stat(p, function (err, fileStat) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(fileStat);
+      });
+    });
+  };
+
+  Fs.prototype.mkdir = function mkdir(p) {
+    var fs = System._nodeRequire('fs');
+    return new Promise(function (resolve, reject) {
+      fs.mkdir(p, function (err, folder) {
+        if (err) reject(err);
+        resolve();
+      });
+    });
+  };
+
+  Fs.prototype.appendFile = function appendFile(p, text) {
+    var fs = System._nodeRequire('fs');
+    return new Promise(function (resolve, reject) {
+      fs.appendFile(p, text, function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  };
+
   Fs.prototype.downloadFile = function downloadFile(url, targetPath) {
     var _this2 = this;
 
@@ -479,6 +554,11 @@ var Fs = exports.Fs = function () {
         return _ref12.apply(this, arguments);
       };
     }());
+  };
+
+  Fs.prototype.getConstants = function getConstants() {
+    var fs = System._nodeRequire('fs');
+    return fs.constants;
   };
 
   Fs.prototype._downloadFile = function _downloadFile(stream, url, targetPath) {

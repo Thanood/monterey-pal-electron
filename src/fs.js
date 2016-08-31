@@ -201,6 +201,81 @@ export class Fs {
     temp.cleanupSync();
   }
 
+  access(p, flags) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.access(p, flags, function(err) {
+        if (err) {
+          resolve(false);
+          return;
+        }
+
+        resolve(true);
+      });
+    });
+  }
+
+  readdir(p) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.readdir(p, (err, files) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(files);
+      });
+    });
+  }
+
+  unlink(p) {
+    return new Promise((resolve, reject) => {
+      fs.unlink(p, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  stat(p) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.stat(p, (err, fileStat) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(fileStat);
+      });
+    });
+  }
+
+  mkdir(p) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.mkdir(p, (err, folder) => {
+        if(err) reject(err);
+        resolve();
+      });
+    });
+  }
+
+  appendFile(p, text) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.appendFile(p, text, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
   downloadFile(url, targetPath) {
     const fs = System._nodeRequire('fs');
     return new Promise(async (resolve, reject) => {
@@ -212,6 +287,11 @@ export class Fs {
         reject(e);
       }
     });
+  }
+
+  getConstants() {
+    const fs = System._nodeRequire('fs');
+    return fs.constants;
   }
 
   _downloadFile(stream, url, targetPath) {
