@@ -5,10 +5,7 @@ const mainWindow = require('electron').remote.getGlobal('mainWindow');
 const path = require('path');
 
 exports.install = function (deps, options) {
-  if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
-  if (!options.jspmOptions.workingDirectory) throw new Error('jspmOptions.workingDirectory is required');
-
-  let jspm = exports.getJSPMModule(options.project.packageJSONPath, 'api.js');
+  let jspm = exports.getJSPMModule(options.jspmModulesPath, 'api.js');
   jspm.setPackagePath(options.jspmOptions.workingDirectory);
 
   jspm.on('log', (type, msg) => {
@@ -25,30 +22,21 @@ exports.install = function (deps, options) {
 
 
 exports.dlLoader = function (options) {
-  if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
-  if (!options.jspmOptions.workingDirectory) throw new Error('jspmOptions.workingDirectory is required');
-
-  let jspm = exports.getJSPMModule(options.project.packageJSONPath, 'api.js');
-  let jspmCore = exports.getJSPMModule(options.project.packageJSONPath, 'lib', 'core.js');
+  let jspm = exports.getJSPMModule(options.jspmModulesPath, 'api.js');
+  let jspmCore = exports.getJSPMModule(options.jspmModulesPath, 'lib', 'core.js');
   jspm.setPackagePath(options.jspmOptions.workingDirectory);
   return jspmCore.checkDlLoader();
 };
 
-exports.getJSPMRootPath = function (packageJSONPath) {
-  return path.join(path.dirname(packageJSONPath), 'node_modules', 'jspm');
-}
-
-exports.getJSPMModule = function(packageJSONPath, ...segments) {
+exports.getJSPMModule = function(jspmModulesPath, ...segments) {
   let segs = Array.prototype.slice.call(segments);
-  segs.unshift(exports.getJSPMRootPath(packageJSONPath));
+  segs.unshift(jspmModulesPath);
   return require(path.join.apply(this, segs));
 }
 
 exports.getConfig = function (options) {
-  if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
-
-  let jspm = exports.getJSPMModule(options.project.packageJSONPath, 'api.js');
-  let jspmConfig = exports.getJSPMModule(options.project.packageJSONPath, 'lib', 'config.js');
+  let jspm = exports.getJSPMModule(options.jspmModulesPath, 'api.js');
+  let jspmConfig = exports.getJSPMModule(options.jspmModulesPath, 'lib', 'config.js');
   let originalWorkingDirectory = process.cwd();
   process.chdir(path.dirname(options.project.packageJSONPath));
   jspm.setPackagePath(path.dirname(options.project.packageJSONPath));
@@ -74,11 +62,8 @@ exports.getConfig = function (options) {
 
 
 exports.getForks = function (config, options) {
-  if (!options.jspmOptions.workingDirectory) throw new Error('jspmOptions.workingDirectory is required');
-  if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
-
-  let jspm = exports.getJSPMModule(options.project.packageJSONPath, 'api.js');
-  let semver = exports.getJSPMModule(options.project.packageJSONPath, 'lib', 'semver');
+  let jspm = exports.getJSPMModule(options.jspmModulesPath, 'api.js');
+  let semver = exports.getJSPMModule(options.jspmModulesPath, 'lib', 'semver');
   jspm.setPackagePath(options.jspmOptions.workingDirectory);
 
   let installed = config.loader;

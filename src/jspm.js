@@ -4,6 +4,10 @@ import {Fs} from './fs';
 
 export class JSPM {
   install (deps, options) {
+    if (!options.jspmModulesPath) throw new Error('options.jspmModulesPath is required');
+    if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
+    if (!options.jspmOptions.workingDirectory) throw new Error('options.jspmOptions.workingDirectory is required');
+
     const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
     const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
@@ -19,6 +23,7 @@ export class JSPM {
     this._log(options, 'installing...');
     return jspmModule.install(deps, {
       guid: options.guid,
+      jspmModulesPath: options.jspmModulesPath,
       jspmOptions: options.jspmOptions,
       project: {
         packageJSONPath: options.project.packageJSONPath
@@ -33,23 +38,18 @@ export class JSPM {
     });
   }
 
-  isJspmInstalled(packageJSONPath) {
-    const path = System._nodeRequire('path');
-    return new Fs().fileExists(path.join(this.getJSPMRootPath(packageJSONPath), 'jspm.js'));
-  }
-
-  getJSPMRootPath(packageJSONPath) {
-    const path = System._nodeRequire('path');
-    return path.join(path.dirname(packageJSONPath), 'node_modules', 'jspm');
-  }
-
   downloadLoader(options) {
+    if (!options.jspmModulesPath) throw new Error('options.jspmModulesPath is required');
+    if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
+    if (!options.jspmOptions.workingDirectory) throw new Error('jspmOptions.workingDirectory is required');
+
     const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
     const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     let jspmModule = requireTaskPool(jspmTaskPath);
 
     this._log(options, 'downloading systemjs loader...');
     return jspmModule.dlLoader({
+      jspmModulesPath: options.jspmModulesPath,
       jspmOptions: options.jspmOptions,
       project: {
         packageJSONPath: options.project.packageJSONPath
@@ -64,10 +64,15 @@ export class JSPM {
   }
 
   getForks(config, options) {
+    if (!options.jspmModulesPath) throw new Error('options.jspmModulesPath is required');
+    if (!options.jspmOptions.workingDirectory) throw new Error('jspmOptions.workingDirectory is required');
+    if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
+
     const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
     const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     let jspmModule = requireTaskPool(jspmTaskPath);
     return jspmModule.getForks(config, {
+      jspmModulesPath: options.jspmModulesPath,
       jspmOptions: options.jspmOptions,
       project: {
         packageJSONPath: options.project.packageJSONPath
@@ -76,6 +81,9 @@ export class JSPM {
   }
 
   getConfig(options) {
+    if (!options.jspmModulesPath) throw new Error('options.jspmModulesPath is required');
+    if (!options.project.packageJSONPath) throw new Error('project.packageJSONPath is required');
+
     const requireTaskPool = System._nodeRequire('electron-remote').requireTaskPool;
     const jspmTaskPath = System._nodeRequire.resolve(__dirname + '/jspm_commands.js');
     const ipcRenderer = System._nodeRequire('electron').ipcRenderer;
@@ -89,6 +97,7 @@ export class JSPM {
     });
 
     return jspmModule.getConfig({
+      jspmModulesPath: options.jspmModulesPath,
       guid: options.guid,
       jspmOptions: options.jspmOptions,
       project: {

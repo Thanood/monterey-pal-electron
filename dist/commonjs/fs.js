@@ -333,6 +333,10 @@ var Fs = exports.Fs = function () {
     return remote.getGlobal('rootDir');
   };
 
+  Fs.prototype.getGlobalNodeModulesPath = function getGlobalNodeModulesPath() {
+    return System._nodeRequire('global-modules');
+  };
+
   Fs.prototype.normalize = function normalize(p) {
     var path = System._nodeRequire('path');
     return path.normalize(p);

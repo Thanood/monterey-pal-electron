@@ -136,6 +136,10 @@ export class Fs {
     return remote.getGlobal('rootDir');
   }
 
+  getGlobalNodeModulesPath() {
+    return System._nodeRequire('global-modules');
+  }
+
   normalize(p) {
     const path = System._nodeRequire('path');
     return path.normalize(p);
