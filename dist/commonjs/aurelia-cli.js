@@ -8,9 +8,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var NPM = System._nodeRequire('aurelia-cli/lib/npm').NPM;
-var path = System._nodeRequire('path');
-
 var AureliaCLI = exports.AureliaCLI = function () {
     function AureliaCLI() {
         _classCallCheck(this, AureliaCLI);
@@ -59,6 +56,9 @@ var AureliaCLI = exports.AureliaCLI = function () {
                             return project.create({}, pathToAddProject);
 
                         case 18:
+                            return _context.abrupt('return', project);
+
+                        case 19:
                         case 'end':
                             return _context.stop();
                     }
@@ -75,11 +75,13 @@ var AureliaCLI = exports.AureliaCLI = function () {
 
     AureliaCLI.prototype.install = function () {
         var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(model) {
-            var npm, npmOptions;
+            var path, NPM, npm, npmOptions;
             return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                     switch (_context2.prev = _context2.next) {
                         case 0:
+                            path = System._nodeRequire('path');
+                            NPM = System._nodeRequire('aurelia-cli/lib/npm').NPM;
                             npm = new NPM();
                             npmOptions = {
                                 loglevel: 'error',
@@ -88,26 +90,26 @@ var AureliaCLI = exports.AureliaCLI = function () {
                                 'save-dev': true,
                                 workingDirectory: path.join(model.path, model.name)
                             };
-                            _context2.prev = 2;
-                            _context2.next = 5;
+                            _context2.prev = 4;
+                            _context2.next = 7;
                             return npm.install([], npmOptions);
 
-                        case 5:
+                        case 7:
                             return _context2.abrupt('return', _context2.sent);
 
-                        case 8:
-                            _context2.prev = 8;
-                            _context2.t0 = _context2['catch'](2);
+                        case 10:
+                            _context2.prev = 10;
+                            _context2.t0 = _context2['catch'](4);
 
                             console.log(_context2.t0);
                             throw _context2.t0;
 
-                        case 12:
+                        case 14:
                         case 'end':
                             return _context2.stop();
                     }
                 }
-            }, _callee2, this, [[2, 8]]);
+            }, _callee2, this, [[4, 10]]);
         }));
 
         function install(_x2) {

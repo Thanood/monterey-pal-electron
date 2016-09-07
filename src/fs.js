@@ -1,16 +1,8 @@
-const fs       = System._nodeRequire('fs');
-const dialog   = System._nodeRequire('electron').remote.dialog;
-const path     = System._nodeRequire('path');
-const https    = System._nodeRequire('https');
 const temp     = System._nodeRequire('temp').track();
-const yauzl    = System._nodeRequire('yauzl');
-const mkdirp   = System._nodeRequire('mkdirp');
-const mv       = System._nodeRequire('mv');
-const nodeUrl  = System._nodeRequire('url');
-const remote   = System._nodeRequire('electron').remote;
 
 export class Fs {
   async readFile(filePath) {
+    const fs = System._nodeRequire('fs');
     return new Promise((resolve, reject) => {
       fs.readFile(filePath, 'utf8', function(err, data) {
         if (err) {
@@ -22,7 +14,8 @@ export class Fs {
   }
 
   async fileExists(p) {
-    return new Promise(resolve => {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
       fs.stat(p, function(err, stat) {
         if (err === null) {
           resolve(true);
@@ -35,7 +28,32 @@ export class Fs {
     });
   }
 
+  async createFolder(p) {
+    const mkdirp = System._nodeRequire('mkdirp');
+
+    return new Promise((resolve, reject) => {
+      mkdirp(p, function (err) {
+        if (err) reject(err);
+        resolve();
+      });
+    });
+  }
+
+  async folderExists(p) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.stat(p, function(err, stat) {
+        if (err) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  }
+
   async writeFile(path, content) {
+    const fs = System._nodeRequire('fs');
     return new Promise((resolve, reject) => {
       fs.writeFile(path, content, (err) => {
         if (err) reject(err);
@@ -46,12 +64,14 @@ export class Fs {
   }
 
   async showOpenDialog(config) {
+    const dialog   = System._nodeRequire('electron').remote.dialog;
     return new Promise(resolve => {
       dialog.showOpenDialog(config, c => resolve(c));
     });
   }
 
   getDirName(p) {
+    const path = System._nodeRequire('path');
     let split = p.split(path.sep);
     if (p.endsWith(path.sep)) {
       return split[split.length - 2];
@@ -61,10 +81,12 @@ export class Fs {
   }
 
   getFolderPath(p) {
+    const path = System._nodeRequire('path');
     return path.dirname(p);
   }
 
   join(...segments) {
+    const path = System._nodeRequire('path');
     return path.join.apply(null, segments);
   }
 
@@ -95,6 +117,8 @@ export class Fs {
   }
 
   async move(from, to) {
+    const mv = System._nodeRequire('mv');
+
     return new Promise((resolve, reject) => {
       mv(from, to, {mkdirp: true}, function(err) {
         if (err) {
@@ -108,14 +132,25 @@ export class Fs {
   }
 
   getRootDir() {
+    const remote = System._nodeRequire('electron').remote;
     return remote.getGlobal('rootDir');
   }
 
+  getGlobalNodeModulesPath() {
+    return System._nodeRequire('global-modules');
+  }
+
   normalize(p) {
+    const path = System._nodeRequire('path');
     return path.normalize(p);
   }
 
   async unzip(zipPath, outPath) {
+    const yauzl = System._nodeRequire('yauzl');
+    const fs = System._nodeRequire('fs');
+    const path = System._nodeRequire('path');
+    const mkdirp = System._nodeRequire('mkdirp');
+
     return new Promise((resolve, reject) => {
       yauzl.open(zipPath, {autoClose: true, lazyEntries: true}, (err, zipfile) => {
         if (err) reject(err);
@@ -149,6 +184,9 @@ export class Fs {
   }
 
   async getDirectories(p) {
+    const fs = System._nodeRequire('fs');
+    const path = System._nodeRequire('path');
+
     return new Promise((resolve, reject) => {
       fs.readdir(p, function(err, files) {
         if (err) {
@@ -167,7 +205,83 @@ export class Fs {
     temp.cleanupSync();
   }
 
+  access(p, flags) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.access(p, flags, function(err) {
+        if (err) {
+          resolve(false);
+          return;
+        }
+
+        resolve(true);
+      });
+    });
+  }
+
+  readdir(p) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.readdir(p, (err, files) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(files);
+      });
+    });
+  }
+
+  unlink(p) {
+    return new Promise((resolve, reject) => {
+      fs.unlink(p, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  stat(p) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.stat(p, (err, fileStat) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(fileStat);
+      });
+    });
+  }
+
+  mkdir(p) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.mkdir(p, (err, folder) => {
+        if(err) reject(err);
+        resolve();
+      });
+    });
+  }
+
+  appendFile(p, text) {
+    const fs = System._nodeRequire('fs');
+    return new Promise((resolve, reject) => {
+      fs.appendFile(p, text, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
   downloadFile(url, targetPath) {
+    const fs = System._nodeRequire('fs');
     return new Promise(async (resolve, reject) => {
       let file = fs.createWriteStream(targetPath);
       try {
@@ -179,13 +293,22 @@ export class Fs {
     });
   }
 
+  getConstants() {
+    const fs = System._nodeRequire('fs');
+    return fs.constants;
+  }
+
   _downloadFile(stream, url, targetPath) {
+    const nodeUrl  = System._nodeRequire('url');
+    const http     = System._nodeRequire('http');
+    const https    = System._nodeRequire('https');
+    
     let promise = new Promise((resolve, reject) => {
       let opts = nodeUrl.parse(url);
       opts.headers = {
         'User-Agent': 'electron'
       };
-      https.get(opts, (response) => {
+      (url.startsWith('https') ? https : http).get(opts, (response) => {
         if (response.statusCode === 200) {
           response.on('data', function(data) {
             stream.write(data);

@@ -1,6 +1,3 @@
-const NPM  = System._nodeRequire('aurelia-cli/lib/npm').NPM;
-const path = System._nodeRequire('path');
-
 export class AureliaCLI {
   async create(model) {
     let ProjectTemplate = System._nodeRequire('aurelia-cli/lib/commands/new/project-template').ProjectTemplate;
@@ -33,9 +30,13 @@ export class AureliaCLI {
 
     let pathToAddProject = model.path;
     await project.create({}, pathToAddProject);
+
+    return project;
   }
 
   async install(model) {
+    const path = System._nodeRequire('path');
+    const NPM  = System._nodeRequire('aurelia-cli/lib/npm').NPM;
     let npm = new NPM();
     let npmOptions = {
       loglevel: 'error',
